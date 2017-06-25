@@ -47,6 +47,7 @@ q:before, q:after {
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
+  margin-left: 10%;
 }
 
 #logo {
@@ -93,4 +94,52 @@ h1 {
 
 #image1, #image2, #image3{
   background-size: 100%;
+}
+
+table {
+  width: 80%;
+  float: left;
+  margin-top: 10%;
+  margin-bottom: 10%;
+}
+
+th {
+  font-family: 'Questrial', sans-serif;
+  color: #144E45;
+  font-size: 120%;
+  font-weight: bolder;
+  text-align: center;
+  padding: 1%;
+  border-bottom: 1px solid #D3D4D5;
+	border-top: none;
+	border-right: none;
+	border-left: none;
+  background-color: #FFFFFF;
+  vertical-align: middle;
+  width: auto;
+}
+
+td {
+  font-family: 'Questrial', sans-serif;
+  color: #000000;
+  text-align: center;
+  padding: 1%;
+  border-bottom: 1px solid #D3D4D5;
+	border-top: none;
+	border-right: none;
+	border-left: none;
+  vertical-align: middle;
+  width: auto;
+}
+
+/*tr:nth-child(even) {
+  background-color: #EFF3F7;
+}
+*/
+
+#firstItem {
+	text-align: left;
+	font-weight: bolder;
+	white-space: nowrap;
+	color: #1E1D21;
 }

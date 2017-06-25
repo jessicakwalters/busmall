@@ -15,26 +15,26 @@ function Image(imageName, path, elId) {
   images.push(this);
 }
 
-var bag = new Image('bag', 'assets/bag.jpg', 1);
-var banana = new Image('banana', 'assets/banana.jpg', 2);
-var bathroom = new Image('bathroom', 'assets/bathroom.jpg', 3);
-var boots = new Image('boots', 'assets/boots.jpg', 4);
-var breakfast = new Image('breakfast', 'assets/breakfast.jpg', 5);
-var bubblegum = new Image('bubblegum', 'assets/bubblegum.jpg', 6);
-var chair = new Image('chair', 'assets/chair.jpg', 7);
-var cthulhu = new Image('cthulhu', 'assets/cthulhu.jpg', 8);
-var dogDuck = new Image('dog-duck', 'assets/dog-duck.jpg', 9);
-var dragon = new Image('dragon', 'assets/dragon.jpg', 10);
-var pen = new Image('pen', 'assets/pen.jpg', 11);
-var petSweep = new Image('pet-sweep', 'assets/pet-sweep.jpg', 12);
-var scissors = new Image('scissors', 'assets/scissors.jpg', 13);
-var shark = new Image('shark', 'assets/shark.jpg', 14);
-var sweep = new Image('sweep', 'assets/sweep.jpg', 15);
-var tauntaun = new Image('tauntaun', 'assets/tauntaun.jpg', 16);
-var unicorn = new Image('unicorn', 'assets/unicorn.jpg', 17);
-var usb = new Image('usb', 'assets/usb.jpg', 18);
-var waterCan = new Image('water-can', 'assets/water-can.jpg', 19);
-var wineGlass = new Image('wine-glass', 'assets/wine-glass.jpg', 20);
+var bag = new Image('R2D2 Suitcase', 'assets/bag.jpg', 1);
+var banana = new Image('Banana Slicer', 'assets/banana.jpg', 2);
+var bathroom = new Image('Toilet Paper & Ipad Stand', 'assets/bathroom.jpg', 3);
+var boots = new Image('Toe-Less Rainboots', 'assets/boots.jpg', 4);
+var breakfast = new Image('Breakfast Maker', 'assets/breakfast.jpg', 5);
+var bubblegum = new Image('Meatball Bubblegum', 'assets/bubblegum.jpg', 6);
+var chair = new Image('Red Chair', 'assets/chair.jpg', 7);
+var cthulhu = new Image('Cthulhu Doll', 'assets/cthulhu.jpg', 8);
+var dogDuck = new Image('Doggie Duck Mask', 'assets/dog-duck.jpg', 9);
+var dragon = new Image('Dragon Meat', 'assets/dragon.jpg', 10);
+var pen = new Image('Silverware Pen', 'assets/pen.jpg', 11);
+var petSweep = new Image('Dusting Pet Booties', 'assets/pet-sweep.jpg', 12);
+var scissors = new Image('Pizza Scissors', 'assets/scissors.jpg', 13);
+var shark = new Image('Shark Sleeping Bag', 'assets/shark.jpg', 14);
+var sweep = new Image('Dusting Baby Onesie', 'assets/sweep.jpg', 15);
+var tauntaun = new Image('Tauntaun Sleeping Bag', 'assets/tauntaun.jpg', 16);
+var unicorn = new Image('Unicorn Meat', 'assets/unicorn.jpg', 17);
+var usb = new Image('Tental USB Flash Drive', 'assets/usb.jpg', 18);
+var waterCan = new Image('Self Watering Can', 'assets/water-can.jpg', 19);
+var wineGlass = new Image('Undrinkable Wine Glass', 'assets/wine-glass.jpg', 20);
 
 //randomly choose 3 images - create a for loop that runs through the images array 3 times and randomly chooses 3 ids.
 
@@ -93,6 +93,9 @@ function handleSubmit(event){
   previouscards = [];
   previouscards = currentcards;
   if (clicks === 25) {
+    for (var i = 0; i < previouscards.length; i++) {
+      images.push(previouscards[i]);
+    };
     createTableHeader(tableHeader);
     createTableBody(images);
     for (var k = 0; k < images.length; k++) {
@@ -157,8 +160,8 @@ Image.prototype.createTableTbRow = function() {
     }
     else {
       newTbRow.appendChild(newTbTd);
-      var percentage = this.timesClicked / this.timesShown * 100;
-      if (percentage == NaN){
+      var percentage = (this.timesClicked / this.timesShown * 100).toFixed(2);
+      if (this.timesShown === 0){
         newTbTd.textContent = 0;
       }
       else {
