@@ -82,12 +82,16 @@ h1 {
   height: 307px;
 }
 
+#image-block {
+  float: left;
+  width: 100%;
+}
 
 .image {
   float: left;
   width: 238px;
   height: 307px;
-  margin-left: 7%;
+  margin-left: 12%;
   margin-top: 8%;
   border: 1px solid #144E45;
 }
