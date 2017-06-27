@@ -1,11 +1,12 @@
 'use strict';
-//Create an array of all the images - done
+//global variables
 var images = []; //holds objects
 var currentcards = [];
 var previouscards = [];
 var clicks = 0;
 var tableHeader = ['Product Name', 'Times Clicked', 'Times Displayed', 'Percenatge Chosen'];
 
+//product constructor function
 function Image(imageName, path, elId) {
   this.imageName = imageName;
   this.path = path;
@@ -15,6 +16,7 @@ function Image(imageName, path, elId) {
   images.push(this);
 }
 
+//create products
 var bag = new Image('R2D2 Suitcase', 'assets/bag.jpg', 1);
 var banana = new Image('Banana Slicer', 'assets/banana.jpg', 2);
 var bathroom = new Image('Toilet Paper & Ipad Stand', 'assets/bathroom.jpg', 3);
@@ -36,81 +38,89 @@ var usb = new Image('Tental USB Flash Drive', 'assets/usb.jpg', 18);
 var waterCan = new Image('Self Watering Can', 'assets/water-can.jpg', 19);
 var wineGlass = new Image('Undrinkable Wine Glass', 'assets/wine-glass.jpg', 20);
 
-//randomly choose 3 images - create a for loop that runs through the images array 3 times and randomly chooses 3 ids.
-
 console.log('Full array of images');
 console.log(images);
 console.log(images.length);
 
+//randomly choose 3 images - create a for loop that runs through the images array 3 times and randomly chooses 3 ids.
 function generateNewImageSet(array) {
+//make sure currentcards array is empty
   currentcards = [];
+  //fill current cards array using for loop
   for (var i = 0; i < 3; i++) {
-    //generate a random number between 0 and images.length -1
+    //generate a random number between 0 and images.length -1 the random number will be used to choose a product at random
     var randomNum =  Math.round(Math.random() * (images.length - 1));
     console.log('random number' + randomNum);
-    console.log(images);
     console.log(images[randomNum]);
     //use the random number to find an image
     //push the image into the currentcards array
     currentcards.push(images[randomNum]);
-    console.log(currentcards);
     //remove the image from the images array
     images.splice(randomNum, 1);
-    console.log(images);
   };
+  console.log(currentcards);
+  console.log(images.length);
+  //if there is anything stored in previouscards, add it back to the images array
   for (var i = 0; i < previouscards.length; i++) {
     images.push(previouscards[i]);
   };
 };
 
-//display currentcards to user
+//create a function to display currentcards to user
 function displayCurrentCards(array) {
-  console.log(currentcards[0].path);
   document.getElementById('image1').style.backgroundImage = 'url(' + currentcards[0].path + ')';
   document.getElementById('image2').style.backgroundImage = 'url(' + currentcards[1].path + ')';
   document.getElementById('image3').style.backgroundImage = 'url(' + currentcards[2].path + ')';
 };
 
 //onclick log the image clicked and store in an array
+//store elements in variables
 var formEl0 = document.getElementById(0);
 var formEl1 = document.getElementById(1);
 var formEl2 = document.getElementById(2);
-
+//add event listeners
 formEl0.addEventListener('submit', handleSubmit);
 formEl1.addEventListener('submit', handleSubmit);
 formEl2.addEventListener('submit', handleSubmit);
-
+//on click do the following:
 function handleSubmit(event){
   event.preventDefault();
+//record the click
   clicks += 1;
+  //store the target of the click event in a variable and use it to record times shown and times clicked
   var target = event.target.id;
-  console.log(target);
   currentcards[target].timesClicked += 1;
   for (var j = 0; j < currentcards.length; j++) {
     currentcards[j].timesShown += 1;
   }
   console.log(clicks + ' clicks');
+//make sure previous cards is empty and store current cards in previouscards
   previouscards = [];
   previouscards = currentcards;
+  //at 25 clicks, create table
   if (clicks === 25) {
-    for (var i = 0; i < previouscards.length; i++) {
-      images.push(previouscards[i]);
-    };
     createTableHeader(tableHeader);
     createTableBody(images);
     for (var k = 0; k < images.length; k++) {
       images[k].createTableTbRow;
     }
+    //disable buttons after 25 clicks
+    document.getElementById('fieldset1').disabled = true;
+    document.getElementById('fieldset2').disabled = true;
+    document.getElementById('fieldset3').disabled = true;
+    return;
   }
+  //otherwise, display another set of images
   else {
     generateNewImageSet(images);
     displayCurrentCards(currentcards);
   }
 }
+//call the functions to get things started
 generateNewImageSet(images);
 displayCurrentCards(currentcards);
 
-//restart loop
+
 
 var positionTable = document.getElementById('table');
 var newTHead = document.createElement('thead');
@@ -131,13 +141,15 @@ var createTableHeader = function(array) {
   };
 };
 
-//createTableBody functin
+//createTableBody functi0n
 var createTableBody = function(array) {
   positionTable.appendChild(newTBody);
   for (var i = 0; i < array.length; i++) {
     array[i].createTableTbRow();
   };
 };
+
+//prototype for each Image object to create it's own table row
 
 Image.prototype.createTableTbRow = function() {
   var newTbRow = document.createElement('tr');
