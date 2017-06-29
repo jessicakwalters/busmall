@@ -5,38 +5,43 @@ var currentcards = [];
 var previouscards = [];
 var clicks = 0;
 var tableHeader = ['Product Name', 'Times Clicked', 'Times Displayed', 'Percenatge Chosen'];
+var labelNames = [];
+var dataSetClicked = [];
+var dataSetShown = [];
+var positionTable = document.getElementById('table');
+var newTHead = document.createElement('thead');
+var newTBody = document.createElement('tbody');
 
 //product constructor function
-function Image(imageName, path, elId) {
+function Image(imageName, path) {
   this.imageName = imageName;
   this.path = path;
-  this.elId = elId;
   this.timesShown = 0;
   this.timesClicked = 0;
   images.push(this);
 }
 
 //create products
-var bag = new Image('R2D2 Suitcase', 'assets/bag.jpg', 1);
-var banana = new Image('Banana Slicer', 'assets/banana.jpg', 2);
-var bathroom = new Image('Toilet Paper & Ipad Stand', 'assets/bathroom.jpg', 3);
-var boots = new Image('Toe-Less Rainboots', 'assets/boots.jpg', 4);
-var breakfast = new Image('Breakfast Maker', 'assets/breakfast.jpg', 5);
-var bubblegum = new Image('Meatball Bubblegum', 'assets/bubblegum.jpg', 6);
-var chair = new Image('Red Chair', 'assets/chair.jpg', 7);
-var cthulhu = new Image('Cthulhu Doll', 'assets/cthulhu.jpg', 8);
-var dogDuck = new Image('Doggie Duck Mask', 'assets/dog-duck.jpg', 9);
-var dragon = new Image('Dragon Meat', 'assets/dragon.jpg', 10);
-var pen = new Image('Silverware Pen', 'assets/pen.jpg', 11);
-var petSweep = new Image('Dusting Pet Booties', 'assets/pet-sweep.jpg', 12);
-var scissors = new Image('Pizza Scissors', 'assets/scissors.jpg', 13);
-var shark = new Image('Shark Sleeping Bag', 'assets/shark.jpg', 14);
-var sweep = new Image('Dusting Baby Onesie', 'assets/sweep.jpg', 15);
-var tauntaun = new Image('Tauntaun Sleeping Bag', 'assets/tauntaun.jpg', 16);
-var unicorn = new Image('Unicorn Meat', 'assets/unicorn.jpg', 17);
-var usb = new Image('Tental USB Flash Drive', 'assets/usb.jpg', 18);
-var waterCan = new Image('Self Watering Can', 'assets/water-can.jpg', 19);
-var wineGlass = new Image('Undrinkable Wine Glass', 'assets/wine-glass.jpg', 20);
+var bag = new Image('R2D2 Suitcase', 'assets/bag.jpg');
+var banana = new Image('Banana Slicer', 'assets/banana.jpg');
+var bathroom = new Image('Toilet Paper & Ipad Stand', 'assets/bathroom.jpg');
+var boots = new Image('Toe-Less Rainboots', 'assets/boots.jpg');
+var breakfast = new Image('Breakfast Maker', 'assets/breakfast.jpg');
+var bubblegum = new Image('Meatball Bubblegum', 'assets/bubblegum.jpg');
+var chair = new Image('Red Chair', 'assets/chair.jpg');
+var cthulhu = new Image('Cthulhu Doll', 'assets/cthulhu.jpg');
+var dogDuck = new Image('Doggie Duck Mask', 'assets/dog-duck.jpg');
+var dragon = new Image('Dragon Meat', 'assets/dragon.jpg');
+var pen = new Image('Silverware Pen', 'assets/pen.jpg');
+var petSweep = new Image('Dusting Pet Booties', 'assets/pet-sweep.jpg');
+var scissors = new Image('Pizza Scissors', 'assets/scissors.jpg');
+var shark = new Image('Shark Sleeping Bag', 'assets/shark.jpg');
+var sweep = new Image('Dusting Baby Onesie', 'assets/sweep.jpg');
+var tauntaun = new Image('Tauntaun Sleeping Bag', 'assets/tauntaun.jpg');
+var unicorn = new Image('Unicorn Meat', 'assets/unicorn.jpg');
+var usb = new Image('Tentacle USB Flash Drive', 'assets/usb.jpg');
+var waterCan = new Image('Self Watering Can', 'assets/water-can.jpg');
+var wineGlass = new Image('Undrinkable Wine Glass', 'assets/wine-glass.jpg');
 
 console.log('Full array of images');
 console.log(images);
@@ -99,6 +104,9 @@ function handleSubmit(event){
   previouscards = currentcards;
   //at 25 clicks, create table
   if (clicks === 25) {
+    for (var i = 0; i < previouscards.length; i++) {
+      images.push(previouscards[i]);
+    }
     createTableHeader(tableHeader);
     createTableBody(images);
     for (var k = 0; k < images.length; k++) {
@@ -108,8 +116,12 @@ function handleSubmit(event){
     document.getElementById('fieldset1').disabled = true;
     document.getElementById('fieldset2').disabled = true;
     document.getElementById('fieldset3').disabled = true;
-    return;
+
+    generateLabels(images);
+    generateDataSet(images);
+    generateChart();
   }
+
   //otherwise, display another set of images
   else {
     generateNewImageSet(images);
@@ -119,12 +131,6 @@ function handleSubmit(event){
 //call the functions to get things started
 generateNewImageSet(images);
 displayCurrentCards(currentcards);
-
-
-
-var positionTable = document.getElementById('table');
-var newTHead = document.createElement('thead');
-var newTBody = document.createElement('tbody');
 
 //create table header function
 var createTableHeader = function(array) {
@@ -182,3 +188,60 @@ Image.prototype.createTableTbRow = function() {
     }
   };
 };
+//chart
+//create chart data
+function generateLabels (array) {
+  for (var i = 0; i < images.length; i++) {
+    labelNames[i] = images[i].imageName;
+  }
+}
+
+function generateDataSet (array) {
+  for (var i = 0; i < images.length; i++) {
+    dataSetClicked[i] = images[i].timesClicked;
+    dataSetShown[i] = images[i].timesShown;
+  }
+}
+
+function generateChart () {
+  //document.getElementById('chart').width = 50;
+  var context = document.getElementById('chart').getContext('2d');
+
+  var chartColors = ['black', 'white', 'yellow', 'green', 'blue', 'red'];
+
+  var myChart = new Chart(context, {
+    type: 'bar',
+    data: {
+      labels: labelNames,
+      datasets: [
+        {
+          label: 'Times Clicked',
+          data: dataSetClicked,
+          backgroundColor: '#144E45'
+        },
+        {
+          label: 'Times Shown',
+          data: dataSetShown,
+          backgroundColor: '#979797'
+        }
+      ]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+            max: 10,
+            min: 0,
+            stepSize: 1
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            autoSkip: false
+          }
+        }]
+      }
+    }
+  });
+}
