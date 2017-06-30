@@ -109,9 +109,7 @@ function handleSubmit(event){
     }
     createTableHeader(tableHeader);
     createTableBody(images);
-    for (var k = 0; k < images.length; k++) {
-      images[k].createTableTbRow;
-    }
+    createTableTbRow(images);
     //disable buttons after 25 clicks
     document.getElementById('fieldset1').disabled = true;
     document.getElementById('fieldset2').disabled = true;
@@ -120,6 +118,7 @@ function handleSubmit(event){
     generateLabels(images);
     generateDataSet(images);
     generateChart();
+    saveObjectsToLocalStorage(images);
   }
 
   //otherwise, display another set of images
@@ -128,12 +127,9 @@ function handleSubmit(event){
     displayCurrentCards(currentcards);
   }
 }
-//call the functions to get things started
-generateNewImageSet(images);
-displayCurrentCards(currentcards);
 
 //create table header function
-var createTableHeader = function(array) {
+function createTableHeader(array) {
   var newThRow = document.createElement('tr');
   positionTable.appendChild(newTHead);
   newTHead.appendChild(newThRow);
@@ -147,47 +143,48 @@ var createTableHeader = function(array) {
   };
 };
 
-//createTableBody functi0n
-var createTableBody = function(array) {
-  positionTable.appendChild(newTBody);
-  for (var i = 0; i < array.length; i++) {
-    array[i].createTableTbRow();
-  };
-};
-
 //prototype for each Image object to create it's own table row
 
-Image.prototype.createTableTbRow = function() {
-  var newTbRow = document.createElement('tr');
-  newTBody.appendChild(newTbRow);
-  //write table data to page
-  for (var j = 0; j < tableHeader.length; j++) {
-    var newTbTd = document.createElement('td');
-    if (j === 0){
-      newTbTd.id = 'firstItem';
-      newTbRow.appendChild(newTbTd);
-      newTbTd.textContent = this.imageName;
-    }
-    else if (j === 1){
-      newTbRow.appendChild(newTbTd);
-      newTbTd.textContent = this.timesClicked;
-    }
-    else if (j === 2){
-      newTbRow.appendChild(newTbTd);
-      newTbTd.textContent = this.timesShown;
-    }
-    else {
-      newTbRow.appendChild(newTbTd);
-      var percentage = (this.timesClicked / this.timesShown * 100).toFixed(2);
-      if (this.timesShown === 0){
-        newTbTd.textContent = 0;
+function createTableTbRow(array) {
+  for (var i = 0; i < images.length; i++) {
+    var newTbRow = document.createElement('tr');
+    newTBody.appendChild(newTbRow);
+    //write table data to page
+    for (var j = 0; j < tableHeader.length; j++) {
+      var newTbTd = document.createElement('td');
+      if (j === 0){
+        newTbTd.id = 'firstItem';
+        newTbRow.appendChild(newTbTd);
+        newTbTd.textContent = array[i].imageName;
+      }
+      else if (j === 1){
+        newTbRow.appendChild(newTbTd);
+        newTbTd.textContent = array[i].timesClicked;
+      }
+      else if (j === 2){
+        newTbRow.appendChild(newTbTd);
+        newTbTd.textContent = array[i].timesShown;
       }
       else {
-        newTbTd.textContent = percentage + '%';
+        newTbRow.appendChild(newTbTd);
+        var percentage = (array[i].timesClicked / array[i].timesShown * 100).toFixed(2);
+        if (array[i].timesShown === 0){
+          newTbTd.textContent = 0;
+        }
+        else {
+          newTbTd.textContent = percentage + '%';
+        }
       }
-    }
-  };
+    };
+  }
 };
+
+//createTableBody functi0n
+function createTableBody(array) {
+  console.log(array);
+  positionTable.appendChild(newTBody);
+};
+
 //chart
 //create chart data
 function generateLabels (array) {
@@ -204,10 +201,7 @@ function generateDataSet (array) {
 }
 
 function generateChart () {
-  //document.getElementById('chart').width = 50;
   var context = document.getElementById('chart').getContext('2d');
-
-  var chartColors = ['black', 'white', 'yellow', 'green', 'blue', 'red'];
 
   var myChart = new Chart(context, {
     type: 'bar',
@@ -238,10 +232,48 @@ function generateChart () {
         }],
         xAxes: [{
           ticks: {
-            autoSkip: false
+            autoSkip: false,
+            fontFamily: 'Questrial',
+            fontColor: 'black'
           }
         }]
-      }
+      },
+      legend: {
+        labels: {
+          fontFamily: 'Questrial',
+          fontColor: 'black'
+        },
+      },
     }
   });
+
 }
+
+function saveObjectsToLocalStorage(objectarray){
+  var imagesString = JSON.stringify(images);
+  localStorage.images = imagesString;
+};
+
+//call the functions to get things started
+if (localStorage.images) {
+  document.getElementById('reset').style.display = 'initial';
+  images = JSON.parse(localStorage.images);
+  createTableHeader(tableHeader);
+  createTableBody(images);
+  console.log('images', images);
+  createTableTbRow(images);
+  generateLabels(images);
+  generateDataSet(images);
+  generateChart();
+
+} else {
+  generateNewImageSet(images);
+  displayCurrentCards(currentcards);
+};
+
+function clear(event){
+  event.preventDefault();
+  localStorage.clear();
+  window.location.reload(true);
+}
+document.getElementById('resetButton').onclick = clear;
