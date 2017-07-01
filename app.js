@@ -8,6 +8,8 @@ var tableHeader = ['Product Name', 'Times Clicked', 'Times Displayed', 'Percenat
 var labelNames = [];
 var dataSetClicked = [];
 var dataSetShown = [];
+var randomNumbers = [];
+var randomNum = 0;
 var positionTable = document.getElementById('table');
 var newTHead = document.createElement('thead');
 var newTBody = document.createElement('tbody');
@@ -50,25 +52,23 @@ console.log(images.length);
 //randomly choose 3 images - create a for loop that runs through the images array 3 times and randomly chooses 3 ids.
 function generateNewImageSet(array) {
 //make sure currentcards array is empty
+  console.log(images);
   currentcards = [];
+  randomNumbers = [];
   //fill current cards array using for loop
   for (var i = 0; i < 3; i++) {
     //generate a random number between 0 and images.length -1 the random number will be used to choose a product at random
-    var randomNum =  Math.round(Math.random() * (images.length - 1));
-    console.log('random number' + randomNum);
-    console.log(images[randomNum]);
-    //use the random number to find an image
-    //push the image into the currentcards array
-    currentcards.push(images[randomNum]);
-    //remove the image from the images array
-    images.splice(randomNum, 1);
+    randomNum = Math.round(Math.random() * (images.length - 1));
+    while (randomNum === randomNumbers[0] || randomNum === randomNumbers[1] || randomNum === previouscards[0] || randomNum === previouscards[1] || randomNum === previouscards[2]) {
+      randomNum = Math.round(Math.random() * (images.length - 1));
+    }
+
+    console.log(randomNum);
+    randomNumbers.push(randomNum);
+      //Create an array of image objects using randomNumbers
+    currentcards[i] = images[randomNumbers[i]];
   };
   console.log(currentcards);
-  console.log(images.length);
-  //if there is anything stored in previouscards, add it back to the images array
-  for (var i = 0; i < previouscards.length; i++) {
-    images.push(previouscards[i]);
-  };
 };
 
 //create a function to display currentcards to user
@@ -91,7 +91,7 @@ formEl2.addEventListener('submit', handleSubmit);
 function handleSubmit(event){
   event.preventDefault();
 //record the click
-  clicks += 1;
+  clicks++;
   //store the target of the click event in a variable and use it to record times shown and times clicked
   var target = event.target.id;
   currentcards[target].timesClicked += 1;
@@ -101,39 +101,30 @@ function handleSubmit(event){
   console.log(clicks + ' clicks');
 //make sure previous cards is empty and store current cards in previouscards
   previouscards = [];
-  previouscards = currentcards;
+  previouscards = randomNumbers;
   //at 25 clicks, create table
-  if (clicks === 25) {
-    for (var i = 0; i < previouscards.length; i++) {
-      images.push(previouscards[i]);
+  if (clicks % 25 === 0) {
+    if (clicks === 25) {
+      createTableHeader(tableHeader);
+    } else {
+      for (var i = 0; i < images.length; i++) {
+        positionTable.deleteRow(1);
+      }
     }
-    createTableHeader(tableHeader);
     createTableBody(images);
-    for (var k = 0; k < images.length; k++) {
-      images[k].createTableTbRow;
-    }
-    //disable buttons after 25 clicks
-    document.getElementById('fieldset1').disabled = true;
-    document.getElementById('fieldset2').disabled = true;
-    document.getElementById('fieldset3').disabled = true;
-
+    createTableTbRow(images);
     generateLabels(images);
     generateDataSet(images);
     generateChart();
-  }
-
-  //otherwise, display another set of images
-  else {
+    saveObjectsToLocalStorage(images);
+  } else {
     generateNewImageSet(images);
     displayCurrentCards(currentcards);
   }
 }
-//call the functions to get things started
-generateNewImageSet(images);
-displayCurrentCards(currentcards);
 
 //create table header function
-var createTableHeader = function(array) {
+function createTableHeader(array) {
   var newThRow = document.createElement('tr');
   positionTable.appendChild(newTHead);
   newTHead.appendChild(newThRow);
@@ -147,47 +138,48 @@ var createTableHeader = function(array) {
   };
 };
 
-//createTableBody functi0n
-var createTableBody = function(array) {
-  positionTable.appendChild(newTBody);
-  for (var i = 0; i < array.length; i++) {
-    array[i].createTableTbRow();
-  };
-};
-
 //prototype for each Image object to create it's own table row
 
-Image.prototype.createTableTbRow = function() {
-  var newTbRow = document.createElement('tr');
-  newTBody.appendChild(newTbRow);
-  //write table data to page
-  for (var j = 0; j < tableHeader.length; j++) {
-    var newTbTd = document.createElement('td');
-    if (j === 0){
-      newTbTd.id = 'firstItem';
-      newTbRow.appendChild(newTbTd);
-      newTbTd.textContent = this.imageName;
-    }
-    else if (j === 1){
-      newTbRow.appendChild(newTbTd);
-      newTbTd.textContent = this.timesClicked;
-    }
-    else if (j === 2){
-      newTbRow.appendChild(newTbTd);
-      newTbTd.textContent = this.timesShown;
-    }
-    else {
-      newTbRow.appendChild(newTbTd);
-      var percentage = (this.timesClicked / this.timesShown * 100).toFixed(2);
-      if (this.timesShown === 0){
-        newTbTd.textContent = 0;
+function createTableTbRow(array) {
+  for (var i = 0; i < images.length; i++) {
+    var newTbRow = document.createElement('tr');
+    newTBody.appendChild(newTbRow);
+    //write table data to page
+    for (var j = 0; j < tableHeader.length; j++) {
+      var newTbTd = document.createElement('td');
+      if (j === 0){
+        newTbTd.id = 'firstItem';
+        newTbRow.appendChild(newTbTd);
+        newTbTd.textContent = array[i].imageName;
+      }
+      else if (j === 1){
+        newTbRow.appendChild(newTbTd);
+        newTbTd.textContent = array[i].timesClicked;
+      }
+      else if (j === 2){
+        newTbRow.appendChild(newTbTd);
+        newTbTd.textContent = array[i].timesShown;
       }
       else {
-        newTbTd.textContent = percentage + '%';
+        newTbRow.appendChild(newTbTd);
+        var percentage = (array[i].timesClicked / array[i].timesShown * 100).toFixed(2);
+        if (array[i].timesShown === 0){
+          newTbTd.textContent = 0;
+        }
+        else {
+          newTbTd.textContent = percentage + '%';
+        }
       }
-    }
-  };
+    };
+  }
 };
+
+//createTableBody functi0n
+function createTableBody(array) {
+  console.log(array);
+  positionTable.appendChild(newTBody);
+};
+
 //chart
 //create chart data
 function generateLabels (array) {
@@ -204,10 +196,7 @@ function generateDataSet (array) {
 }
 
 function generateChart () {
-  //document.getElementById('chart').width = 50;
   var context = document.getElementById('chart').getContext('2d');
-
-  var chartColors = ['black', 'white', 'yellow', 'green', 'blue', 'red'];
 
   var myChart = new Chart(context, {
     type: 'bar',
@@ -231,17 +220,57 @@ function generateChart () {
         yAxes: [{
           ticks: {
             beginAtZero: true,
-            max: 10,
+            max: 20,
             min: 0,
             stepSize: 1
           }
         }],
         xAxes: [{
           ticks: {
-            autoSkip: false
+            autoSkip: false,
+            fontFamily: 'Questrial',
+            fontColor: 'black'
           }
         }]
-      }
+      },
+      legend: {
+        labels: {
+          fontFamily: 'Questrial',
+          fontColor: 'black'
+        },
+      },
     }
   });
+
 }
+
+function saveObjectsToLocalStorage(objectarray){
+  var imagesString = JSON.stringify(images);
+  localStorage.images = imagesString;
+};
+
+//call the functions to get things started
+if (localStorage.images) {
+  document.getElementById('reset').style.display = 'initial';
+  images = JSON.parse(localStorage.images);
+  createTableHeader(tableHeader);
+  createTableBody(images);
+  console.log('images', images);
+  createTableTbRow(images);
+  generateLabels(images);
+  generateDataSet(images);
+  generateChart();
+
+} else {
+  generateNewImageSet(images);
+  displayCurrentCards(currentcards);
+};
+
+function clear(event){
+  event.preventDefault();
+  localStorage.clear();
+  window.location.reload(true);
+}
+document.getElementById('resetButton').onclick = clear;
+// generateNewImageSet(images);
+// displayCurrentCards(images);
