@@ -260,7 +260,8 @@ if (localStorage.images) {
   generateLabels(images);
   generateDataSet(images);
   generateChart();
-
+  generateNewImageSet(images);
+  displayCurrentCards(images);
 } else {
   generateNewImageSet(images);
   displayCurrentCards(currentcards);
@@ -272,5 +273,3 @@ function clear(event){
   window.location.reload(true);
 }
 document.getElementById('resetButton').onclick = clear;
-// generateNewImageSet(images);
-// displayCurrentCards(images);
