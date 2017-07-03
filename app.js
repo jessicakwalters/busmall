@@ -102,6 +102,10 @@ function handleSubmit(event){
 //make sure previous cards is empty and store current cards in previouscards
   previouscards = [];
   previouscards = randomNumbers;
+  saveObjectsToLocalStorage(images);
+  console.log(localStorage.images);
+  localStorage.setItem('clicks', clicks);
+  console.log(localStorage.clicks);
   //at 25 clicks, create table
   if (clicks % 25 === 0) {
     if (clicks === 25) {
@@ -116,7 +120,6 @@ function handleSubmit(event){
     generateLabels(images);
     generateDataSet(images);
     generateChart();
-    saveObjectsToLocalStorage(images);
   } else {
     generateNewImageSet(images);
     displayCurrentCards(currentcards);
@@ -244,22 +247,26 @@ function generateChart () {
 
 }
 
-function saveObjectsToLocalStorage(objectarray){
-  var imagesString = JSON.stringify(images);
-  localStorage.images = imagesString;
+function saveObjectsToLocalStorage(images){
+  var dataString = JSON.stringify(images);
+  localStorage.images = dataString;
 };
 
 //call the functions to get things started
-if (localStorage.images) {
+if (localStorage.images && localStorage.clicks) {
   document.getElementById('reset').style.display = 'initial';
   images = JSON.parse(localStorage.images);
-  createTableHeader(tableHeader);
-  createTableBody(images);
-  console.log('images', images);
-  createTableTbRow(images);
-  generateLabels(images);
-  generateDataSet(images);
-  generateChart();
+  clicks = JSON.parse(localStorage.clicks);
+  alert('You have clicked ' + clicks + ' times');
+  if(clicks >= 25) {
+    createTableHeader(tableHeader);
+    createTableBody(images);
+    console.log('images', images);
+    createTableTbRow(images);
+    generateLabels(images);
+    generateDataSet(images);
+    generateChart();
+  };
   generateNewImageSet(images);
   displayCurrentCards(images);
 } else {
